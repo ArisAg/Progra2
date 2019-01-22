@@ -4,14 +4,16 @@ from wpilib.drive import MecanumDrive
 from state import state
 import oi
 import time
+import infrared
+import math 
+#from encoder import Encoder
 #import pygame
 
 
 class MyRobot(wpilib.TimedRobot):
 
 	def robotInit(self):
-
-
+		
 		#motores
 
 		self.frontLeftMotor = wpilib.Talon(0)
@@ -21,12 +23,16 @@ class MyRobot(wpilib.TimedRobot):
 
 		self.lift_motor = wpilib.Talon(4)
 		self.cargo_motor = wpilib.Talon(5)
-
+		#self.
 		#sensores
+		#self.encoder_left = Encoder(self.pi, settings.PINS['encoder']['left'])
+		#self.encoder_right = Encoder(self.pi, settings.PINS['encoder']['right'])
 
 		self.sensor_izquierdo = wpilib.DigitalInput(1)
 		self.sensor_principal = wpilib.DigitalInput(2)
 		self.sensor_derecho = wpilib.DigitalInput(3)
+		self.ir = wpilib.AnalogInput(1)
+		self.ir2 = wpilib.DigitalInput(4)
 		#invertidores de motores
 
 		self.frontLeftMotor.setInverted(True)
@@ -100,8 +106,16 @@ class MyRobot(wpilib.TimedRobot):
 
 		oi.read_all_controller_inputs()
 
+
 		#código para el funcionamiento del movimiento
 		# de las mecanum a través del control de xbox
+
+		v = max(self.ir.getVoltage(), 0.00001)
+		d = 62.28 * math.pow(v, -1.092)
+
+		print(self.ir2.get())
+		# Constrain output
+		#print(max(min(d, 145.0), 22.5))
 
 		x = state["mov_x"] * .7
 		y = state["mov_y"] * .7
