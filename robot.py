@@ -1,32 +1,47 @@
 
 import wpilib
+import threading
 from wpilib.drive import MecanumDrive
 from state import state
 import oi
 import time
 import infrared
 import math 
+import data
+import wpilib
+import wpilib.encoder
+from pidcontroller import PIDController
+import pidcontroller 
+
+#import wpilibcontroller
+#import PID
 #from encoder import Encoder
+from wpilib import Encoder, IterativeRobot
 #import pygame
 
 
 class MyRobot(wpilib.TimedRobot):
 
+
 	def robotInit(self):
 		
 		#motores
 
+		self.mutex = threading.RLock(1)
 		self.frontLeftMotor = wpilib.Talon(0)
 		self.rearLeftMotor = wpilib.Talon(1)
 		self.frontRightMotor = wpilib.Talon(2)
 		self.rearRightMotor = wpilib.Talon(3)
-
+		self.output = 0
 		self.lift_motor = wpilib.Talon(4)
 		self.cargo_motor = wpilib.Talon(5)
+		self.result = 0
+		#self.rcw = pidcontroller.rcw
 		#self.
 		#sensores
 		#self.encoder_left = Encoder(self.pi, settings.PINS['encoder']['left'])
 		#self.encoder_right = Encoder(self.pi, settings.PINS['encoder']['right'])
+		self.encoder = wpilib.Encoder(0, 7)
 
 		self.sensor_izquierdo = wpilib.DigitalInput(1)
 		self.sensor_principal = wpilib.DigitalInput(2)
@@ -34,7 +49,7 @@ class MyRobot(wpilib.TimedRobot):
 		self.ir = wpilib.AnalogInput(1)
 		self.ir2 = wpilib.DigitalInput(4)
 		#invertidores de motores
-
+		#self.pid = wpilib.PIDController(P, I, D, self.TwoEncoders, self.Drive)
 		self.frontLeftMotor.setInverted(True)
 		self.rearLeftMotor.setInverted(True)
 
@@ -48,6 +63,9 @@ class MyRobot(wpilib.TimedRobot):
 			self.rearLeftMotor,
 			self.frontRightMotor,
 			self.rearRightMotor)
+
+		self.setpoint = 1
+		#self.PIDController = PIDController() 
 
 	def autonomousInit(self):
 		"""This function is run once each time the robot enters autonomous mode."""
@@ -98,22 +116,27 @@ class MyRobot(wpilib.TimedRobot):
 		# 	self.drive.driveCartesian(0,0,-1,0)
 		else:
 			self.drive.driveCartesian(0,0,0,0)
+	
+	def teleopPeriodic(self):
 
-										
-	def teleopPeriodic(self):   
+		print(PIDController.get(self))
+		# print(self.setpoint)
+		#print(self.rcw)
 
+		
+		#self.encoder.reset()
+		Encoder.EncodingType(1)
 		#se leen constantemente los botones y joysticks
-
+		print(self.encoder.get())
 		oi.read_all_controller_inputs()
-
 
 		#código para el funcionamiento del movimiento
 		# de las mecanum a través del control de xbox
-
+	
 		v = max(self.ir.getVoltage(), 0.00001)
 		d = 62.28 * math.pow(v, -1.092)
 
-		print(self.ir2.get())
+		#print(self.ir2.get())
 		# Constrain output
 		#print(max(min(d, 145.0), 22.5))
 
@@ -128,6 +151,7 @@ class MyRobot(wpilib.TimedRobot):
 
 		if state["button_x_active"]:
 			if self.sensor_principal.get():
+				drive_for()
 				self.drive.driveCartesian(0, 0, 0, 0)
 			elif self.sensor_izquierdo.get():
 				self.drive.driveCartesian(0.4, 0, 0, 0)
@@ -151,6 +175,7 @@ class MyRobot(wpilib.TimedRobot):
 			elif state["timer_lift"] <= 300:
 				self.lift_motor.set(-1)
 				self.cargo_motor.set(0)
+
 			else:
 				self.lift_motor.set(0)
 				self.cargo_motor.set(0)

@@ -1,5 +1,5 @@
 import wpilib
-from .digitalinput import DigitalInput
+from wpilib import DigitalInput, IterativeRobot
 from time import sleep
 
 class Encoder(object):
@@ -7,7 +7,7 @@ class Encoder(object):
         self._value = 0
 
         # setup gpiozero to call increment on each when_activated
-        encoder = DigitalInputDevice(pin)
+        encoder = DigitalInput(5)
         encoder.when_activated = self._increment
         encoder.when_deactivated = self._increment
         
@@ -23,7 +23,7 @@ class Encoder(object):
 
 SAMPLETIME = 1
 
-r = Robot((10,9), (8,7)) 
+#r = Robot((10,9), (8,7)) 
 e1 = Encoder(17)
 e2 = Encoder(18)
 
