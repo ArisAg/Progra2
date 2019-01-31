@@ -12,12 +12,14 @@ import wpilib
 import wpilib.encoder
 from pidcontroller import PIDController
 import pidcontroller 
-
+#from encoder2 import Encoder
+from wpilib.counter import Counter
 #import wpilibcontroller
 #import PID
 #from encoder import Encoder
 from wpilib import Encoder, IterativeRobot
 #import pygame
+
 
 
 class MyRobot(wpilib.TimedRobot):
@@ -26,7 +28,7 @@ class MyRobot(wpilib.TimedRobot):
 	def robotInit(self):
 		
 		#motores
-
+		k4X = 2
 		self.mutex = threading.RLock(1)
 		self.frontLeftMotor = wpilib.Talon(0)
 		self.rearLeftMotor = wpilib.Talon(1)
@@ -41,7 +43,7 @@ class MyRobot(wpilib.TimedRobot):
 		#sensores
 		#self.encoder_left = Encoder(self.pi, settings.PINS['encoder']['left'])
 		#self.encoder_right = Encoder(self.pi, settings.PINS['encoder']['right'])
-		self.encoder = wpilib.Encoder(0, 7)
+		self.encoder = wpilib.Encoder(0, 6 , True, k4X)
 
 		self.sensor_izquierdo = wpilib.DigitalInput(1)
 		self.sensor_principal = wpilib.DigitalInput(2)
@@ -119,15 +121,15 @@ class MyRobot(wpilib.TimedRobot):
 	
 	def teleopPeriodic(self):
 
-		print(PIDController.get(self))
+		#print(PIDController.get(self))
 		# print(self.setpoint)
 		#print(self.rcw)
-
 		
+		#print (Encoder.getFPGAIndex(self.encoder))
 		#self.encoder.reset()
-		Encoder.EncodingType(1)
+		
 		#se leen constantemente los botones y joysticks
-		print(self.encoder.get())
+		#print(self.encoder.get())
 		oi.read_all_controller_inputs()
 
 		#código para el funcionamiento del movimiento
@@ -136,7 +138,7 @@ class MyRobot(wpilib.TimedRobot):
 		v = max(self.ir.getVoltage(), 0.00001)
 		d = 62.28 * math.pow(v, -1.092)
 
-		#print(self.ir2.get())
+		print(self.ir2.get())
 		# Constrain output
 		#print(max(min(d, 145.0), 22.5))
 

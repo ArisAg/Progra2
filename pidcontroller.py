@@ -1,13 +1,11 @@
 
-"""Ivmech PID Controller is simple implementation of a Proportional-Integral-Derivative (PID) Controller in the Python Programming Language.
-More information about PID Controller: http://en.wikipedia.org/wiki/PID_controller
-"""
-import time
 
+import time
+from wpilib.counter import Counter
 import wpilib
 import warnings
 import wpilib.encoder
-
+from encoder2 import Encoder
 from wpilib.sendablebuilder import SendableBuilder
 from wpilib.interfaces.pidsource import PIDSource
 from wpilib.lineardigitalfilter import LinearDigitalFilter
@@ -21,11 +19,11 @@ class PIDController(PIDBase):
     """
 
     def __init__(self, output:float, encoder, P=1, I=0.0, D=0.0):
-
+        k4X = 2 
         self.Kp = P
         self.Ki = I
         self.Kd = D
-        self.encoder = wpilib.encoder(0,7)
+        self.encoder = wpilib.encoder(0, 6, True, k4X)
         self.set(output)
         self.output = 0
         self.sample_time = 0.00
@@ -118,11 +116,11 @@ class PIDController(PIDBase):
         super().initSendable(builder)
         builder.addBooleanProperty("enabled", self.isEnabled, self.setEnabled)
 
-    def setSetpoint(self, setpoint):
+    """def setSetpoint(self, setpoint):
         self.setpoint = setpoint
 
     def PID(self):
-        """PID for angle control"""
+        
         error = self.setpoint - self.encoder.getAngle() # Error = Target - Actual
         self.integral = integral + (error*.02)
         derivative = (error - self.previous_error) / .02
@@ -130,9 +128,10 @@ class PIDController(PIDBase):
 
 
     def execute(self):
-        """Called every iteration of teleopPeriodic"""
+        
         self.PID()
-        self.robotDrive.MecanumDrive(0, self.rcw)
+        self.robotDrive.MecanumDrive(0, self.rcw)"""
+
 
 """
 

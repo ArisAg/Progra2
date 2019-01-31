@@ -8,5 +8,6 @@ state = {
 	"mov_z": 0,
 	"activating_lift":False,
 	"timer_lift": 0,
-	"counter": 0
+	"counter": 0,
+	"ir": True
 }

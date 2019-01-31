@@ -26,6 +26,12 @@ def read_all_controller_inputs():
 	button_y = controller.getRawButton(4)
 	state["activating_lift"] = button_y
 
+	button_a = controller.getRawButton(1)
+	state["ir"] = button_a
+
+	
+
+
 
 
 
